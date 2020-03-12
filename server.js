@@ -1,4 +1,4 @@
-// Day 5, full CRUD for chef collection - only
+// Day 5, full CRUD for gardener collection - only
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 const myconn = require("./connection");
 
 // every single collection will need a model
-const Chef = require("./models/chef-model");
+const Gardener = require("./models/gardener-model");
 
 // init express
 const app = express();
@@ -46,8 +46,8 @@ app.use("/api", router);
 
 // find and return a single user based upon _id
 
-router.get("/chef/:id", (req, res) => {
-  Chef.findOne({ _id: req.params.id }, function(err, objFromDB) {
+router.get("/gardener/:id", (req, res) => {
+  Gardener.findOne({ _id: req.params.id }, function(err, objFromDB) {
     //exit now if any kind of error
 
     if (err) return res.json({ result: false });
@@ -58,19 +58,19 @@ router.get("/chef/:id", (req, res) => {
 
 // define CRUD api routes:
 // CREATE
-router.post("/chef", (req, res) => {
-  var chefModel = new Chef();
+router.post("/gardener", (req, res) => {
+  var gardenderModel = new Gardener();
 
   var data = req.body;
   console.log("++++ ", data);
 
-  Object.assign(chefModel, data);
+  Object.assign(gardenerModel, data);
 
-  chefModel.save().then(
-    chef => {
+  gardenerModel.save().then(
+    gardener => {
       return res.json({ result: true });
       //OR
-      // return res.json(chefModel);
+      // return res.json(gardenerModel);
     },
     () => {
       return res.json({ result: false });
@@ -79,11 +79,11 @@ router.post("/chef", (req, res) => {
 });
 
 // READ
-router.get("/chef", (req, res) => {
-  Chef.find().then(
-    chefFromDataBase => {
-      console.table(chefFromDataBase);
-      return res.json(chefFromDataBase);
+router.get("/gardener", (req, res) => {
+  Gardener.find().then(
+    gardenerFromDataBase => {
+      console.table(gardenerFromDataBase);
+      return res.json(gardenerFromDataBase);
     },
     error => {
       console.log("error of some kind");
@@ -92,8 +92,8 @@ router.get("/chef", (req, res) => {
 });
 
 //UPDATE
-router.put("/chef/:id", (req, res) => {
-  Chef.findOne({ _id: req.params.id }, function(err, objFromDB) {
+router.put("/gardener/:id", (req, res) => {
+  Gardener.findOne({ _id: req.params.id }, function(err, objFromDB) {
     if (err) return res.json({ result: false });
     var data = req.body;
     Object.assign(objFromDB, data);
@@ -105,9 +105,9 @@ router.put("/chef/:id", (req, res) => {
 });
 
 // DELETE
-router.delete("/chef/:id", (req, res) => {
+router.delete("/gardener/:id", (req, res) => {
   // as a promise
-  Chef.deleteOne({ _id: req.params.id }).then(
+  Gardener.deleteOne({ _id: req.params.id }).then(
     () => {
       return res.json({ result: true });
     },
