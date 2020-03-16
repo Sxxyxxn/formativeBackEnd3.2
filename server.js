@@ -132,3 +132,107 @@ const port = 4003;
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}!`);
 });
+
+// my functions
+function updateAfterFileUpload(req, res, objFromDB, fileName) {
+  // form data from frontend is stored in the req.body
+  var data = req.body;
+  Object.assign(objFromDB, data);
+  // if fileName param is null use default.jpg
+  objFromDB.profile_image = fileName || "default.jpg";
+
+  objFromDB.save().then(
+    response => {
+      res.json({
+        result: true
+      });
+    },
+    error => {
+      res.json({
+        result: false
+      });
+    }
+  );
+}
+// end  my functions
+
+// 3 new routes to deal with image uploads
+// 1. update for users with form image
+router.put("/users/with-form-image/:id", (req, res) => {
+  User.findOne({ _id: req.params.id }, function(err, objFromDB) {
+    if (err)
+      return res.json({
+        result: false
+      });
+
+    if (req.files) {
+      var files = Object.values(req.files);
+      var uploadedFileObject = files[0];
+      var uploadedFileName = uploadedFileObject.name;
+      var nowTime = Date.now();
+      var newFileName = `${nowTime}_${uploadedFileName}`;
+
+      uploadedFileObject.mv(`public/${newFileName}`).then(
+        params => {
+          updateAfterFileUpload(req, res, objFromDB, newFileName);
+        },
+        params => {
+          updateAfterFileUpload(req, res, objFromDB);
+        }
+      );
+    } else {
+      updateAfterFileUpload(req, res, objFromDB);
+    }
+
+    /////////
+  });
+});
+
+// 2. update for users with form image
+router.put("/users/with-form-image/:id", (req, res) => {
+  User.findOne({ _id: req.params.id }, function(err, objFromDB) {
+    if (err)
+      return res.json({
+        result: false
+      });
+
+    if (req.files) {
+      var files = Object.values(req.files);
+      var uploadedFileObject = files[0];
+      var uploadedFileName = uploadedFileObject.name;
+      var nowTime = Date.now();
+      var newFileName = `${nowTime}_${uploadedFileName}`;
+
+      uploadedFileObject.mv(`public/${newFileName}`).then(
+        params => {
+          updateAfterFileUpload(req, res, objFromDB, newFileName);
+        },
+        params => {
+          updateAfterFileUpload(req, res, objFromDB);
+        }
+      );
+    } else {
+      updateAfterFileUpload(req, res, objFromDB);
+    }
+
+    /////////
+  });
+});
+
+// 3 add single image to express - return filename, does not write to mongodb
+router.put("/users/upload", (req, res) => {
+  if (req.files) {
+    var files = Object.values(req.files);
+    var uploadedFileObject = files[0];
+    var uploadedFileName = uploadedFileObject.name;
+    var nowTime = Date.now();
+    var newFileName = `${nowTime}_${uploadedFileName}`;
+
+    uploadedFileObject.mv(`public/${newFileName}`, function() {
+      // update app
+      res.json({ filename: newFileName, result: true });
+    });
+  } else {
+    res.json({ result: false });
+  }
+});
