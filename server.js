@@ -4,6 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const fileUplad = require("express-fileupload");
 // import db login details
 const myconn = require("./connection");
 
@@ -15,6 +16,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+addEventListener.use(fileUplad());
 app.use(express.static("public"));
 // end init express
 
